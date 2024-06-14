@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokedex</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Optionally include Bootstrap -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-center my-4">Pokedex</h1>
-        <div id="pokemon-gallery" class="row"></div>
-        <div class="text-center my-4">
-            <button id="load-more" class="btn btn-primary">Load More</button>
-        </div>
-    </div>
+    <header>
+        <h1>Pokedex</h1>
+    </header>
+    <main>
+        <div id="pokemon-gallery" class="pokemon-gallery"></div>
+        <button id="load-more" class="btn btn-primary">Load More</button>
+        <div id="pokemon-details" class="pokemon-details"></div>
+    </main>
+    <footer>
+        <p>Footer content</p>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>
