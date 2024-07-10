@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App - Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="quiz.html">Quiz</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h1>Quiz App</h1>
+            <div id="scoreboard">
+                <p>Correct: <span id="correct-count">0</span></p>
+                <p>Incorrect: <span id="incorrect-count">0</span></p>
+                <button id="reset-stats">Reset Stats</button>
+            </div>
+            <form id="difficulty-form">
+                <label for="difficulty">Select Difficulty:</label>
+                <select id="difficulty" name="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <button type="submit">Get Question</button>
+            </form>
+            <div id="quiz-container"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Quiz App</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

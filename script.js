@@ -1,62 +1,71 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const gallery = document.getElementById('pokemon-gallery');
-    const loadMoreButton = document.getElementById('load-more');
-    let nextUrl = 'https://pokeapi.co/api/v2/pokemon?limit=20';
-    const caughtPokemon = JSON.parse(localStorage.getItem('caughtPokemon')) || [];
+    if (document.getElementById('difficulty-form')) {
+        const apiKey = 'OQqoznRXVDJ2bUXtHPUh6R6iAgjuak2H5YxosRlX';
+        const apiUrl = 'https://quizapi.io/api/v1/questions';
+        const difficultyForm = document.getElementById('difficulty-form');
+        const quizContainer = document.getElementById('quiz-container');
+        const correctCountElem = document.getElementById('correct-count');
+        const incorrectCountElem = document.getElementById('incorrect-count');
+        const resetStatsButton = document.getElementById('reset-stats');
 
-    // Function to parse Pokémon ID from URL
-    function parseUrl(url) {
-        return url.split('/').filter(Boolean).pop();
-    }
+        let correctCount = parseInt(localStorage.getItem('correctCount')) || 0;
+        let incorrectCount = parseInt(localStorage.getItem('incorrectCount')) || 0;
 
-    // Function to load Pokémon data
-    async function loadPokemon(url) {
-        const response = await fetch(url);
-        const data = await response.json();
-        nextUrl = data.next;
-        data.results.forEach(pokemon => addPokemonToGallery(pokemon));
-    }
+        correctCountElem.textContent = correctCount;
+        incorrectCountElem.textContent = incorrectCount;
 
-    // Function to add Pokémon to gallery
-    async function addPokemonToGallery(pokemon) {
-        const response = await fetch(pokemon.url);
-        const details = await response.json();
-        const pokemonCard = document.createElement('div');
-        pokemonCard.className = 'pokemon-card';
-        pokemonCard.innerHTML = `
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${details.id}.png" alt="${pokemon.name}">
-            <h5>${pokemon.name}</h5>
-            <button class="btn btn-secondary btn-sm catch-release">${caughtPokemon.includes(details.id) ? 'Release' : 'Catch'}</button>
-        `;
+        difficultyForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const difficulty = document.getElementById('difficulty').value;
+            const response = await fetch(`${apiUrl}?apiKey=${apiKey}&limit=1&difficulty=${difficulty}`);
+            const data = await response.json();
+            displayQuestion(data[0]);
+        });
 
-        pokemonCard.querySelector('img').addEventListener('click', () => showPokemonDetails(details));
-        gallery.appendChild(pokemonCard);
-    }
+        resetStatsButton.addEventListener('click', () => {
+            correctCount = 0;
+            incorrectCount = 0;
+            localStorage.setItem('correctCount', correctCount);
+            localStorage.setItem('incorrectCount', incorrectCount);
+            correctCountElem.textContent = correctCount;
+            incorrectCountElem.textContent = incorrectCount;
+        });
 
-    // Function to show Pokémon details
-    function showPokemonDetails(details) {
-        const detailsDiv = document.getElementById('pokemon-details');
-        detailsDiv.innerHTML = `
-            <h2>${details.name}</h2>
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${details.id}.png" alt="${details.name}">
-            <p>Height: ${details.height}</p>
-            <p>Weight: ${details.weight}</p>
-            <button class="btn btn-secondary" onclick="closeDetails()">Close</button>
-        `;
-        detailsDiv.style.display = 'block';
-    }
+        function displayQuestion(question) {
+            quizContainer.innerHTML = `
+                <p>${question.question}</p>
+                <form id="quiz-form">
+                    ${Object.keys(question.answers).map(key => {
+                        if (question.answers[key]) {
+                            return `<div>
+                                        <input type="radio" name="answer" value="${key}" id="${key}">
+                                        <label for="${key}">${question.answers[key]}</label>
+                                    </div>`;
+                        }
+                        return '';
+                    }).join('')}
+                    <button type="submit">Submit Answer</button>
+                </form>
+            `;
 
-    // Function to close Pokémon details
-    window.closeDetails = function() {
-        document.getElementById('pokemon-details').style.display = 'none';
-    }
-
-    loadMoreButton.addEventListener('click', () => {
-        if (nextUrl) {
-            loadPokemon(nextUrl);
+            const quizForm = document.getElementById('quiz-form');
+            quizForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const selectedAnswer = quizForm.elements['answer'].value;
+                const isCorrect = question.correct_answers[selectedAnswer + '_correct'] === 'true';
+                if (isCorrect) {
+                    correctCount++;
+                    alert('Correct!');
+                } else {
+                    incorrectCount++;
+                    alert('Incorrect!');
+                }
+                localStorage.setItem('correctCount', correctCount);
+                localStorage.setItem('incorrectCount', incorrectCount);
+                correctCountElem.textContent = correctCount;
+                incorrectCountElem.textContent = incorrectCount;
+                quizContainer.innerHTML = '';
+            });
         }
-    });
-
-    // Initial load
-    loadPokemon(nextUrl);
+    }
 });
